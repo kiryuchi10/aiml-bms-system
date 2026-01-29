@@ -1,0 +1,65 @@
+# --- Secrets & environment (never commit) ---
+.env
+.env.*
+!.env.example
+.env.local
+.env.development
+.env.production
+.env.test
+*.pem
+*.key
+secrets/
+*.secret
+.venv/
+venv/
+env/
+
+# --- High-volume / large data ---
+*.parquet
+data/raw/
+data/processed/
+*.mat
+*.zip
+
+# --- Markdown (except allowed integration doc) ---
+*.md
+!**/README_INTEGRATION.md
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# --- Artifacts ---
+artifacts/
+checkpoints/
+*.pkl
+*.joblib
+*.pt
+*.pth
+
+# --- IDE & OS ---
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# --- Node / Frontend ---
+node_modules/
+apps/web/node_modules/
+frontend/node_modules/
+*.log
+npm-debug.log*
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+*.ipynb
+
+# --- Testing & coverage ---
+.pytest_cache/
+.coverage
+htmlcov/

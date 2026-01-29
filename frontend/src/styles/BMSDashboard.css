@@ -1,0 +1,422 @@
+/* BMS Dashboard – layout and styling matching MBM165-P50-B GUI */
+
+.bms-dashboard {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f0f0f0;
+  overflow: hidden;
+}
+
+.bms-dashboard .bms-header {
+  background: white;
+  border-bottom: 1px solid #ccc;
+  padding: 8px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bms-dashboard .bms-header-title {
+  font-size: 13px;
+  color: #333;
+  font-weight: 600;
+}
+
+.bms-dashboard .bms-control-bar {
+  background: #f8f8f8;
+  border-bottom: 1px solid #ccc;
+  padding: 8px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.bms-dashboard .control-btn {
+  padding: 8px 16px;
+  border: 1px solid #adadad;
+  background: linear-gradient(180deg, #ffffff 0%, #e5e5e5 100%);
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.bms-dashboard .control-btn:hover {
+  background: linear-gradient(180deg, #e5f3ff 0%, #cce4ff 100%);
+}
+
+.bms-dashboard .control-btn.connected {
+  background: linear-gradient(180deg, #4caf50 0%, #2e7d32 100%);
+  color: white;
+  border-color: #1b5e20;
+}
+
+.bms-dashboard .control-btn.start {
+  background: linear-gradient(180deg, #c8e6c9 0%, #4caf50 100%);
+  color: white;
+}
+
+.bms-dashboard .bms-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.bms-dashboard .bms-sidebar {
+  width: 100px;
+  background: #f8f8f8;
+  border-right: 1px solid #ccc;
+  padding: 8px;
+}
+
+.bms-dashboard .sidebar-btn {
+  width: 100%;
+  padding: 12px 8px;
+  margin-bottom: 4px;
+  border: 1px solid #adadad;
+  background: linear-gradient(180deg, #00d9ff 0%, #00a8cc 100%);
+  color: white;
+  border-radius: 3px;
+  font-size: 11px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.bms-dashboard .sidebar-btn.inactive {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.bms-dashboard .bms-center {
+  flex: 1;
+  background: white;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.bms-dashboard .panel-header {
+  background: linear-gradient(180deg, #0066cc 0%, #0052a3 100%);
+  color: white;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.bms-dashboard .pack-overview {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.bms-dashboard .metric-card {
+  background: #f8f8f8;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  padding: 12px;
+  text-align: center;
+}
+
+.bms-dashboard .metric-label {
+  font-size: 10px;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.bms-dashboard .metric-value {
+  font-size: 18px;
+  color: #0066cc;
+  font-weight: 700;
+}
+
+.bms-dashboard .metric-value.status {
+  color: #4caf50;
+}
+
+.bms-dashboard .soc-section {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+
+.bms-dashboard .soc-gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.bms-dashboard .soc-circle {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 14px solid #4caf50;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.bms-dashboard .soc-percentage {
+  font-size: 36px;
+  font-weight: 800;
+  color: #4caf50;
+}
+
+.bms-dashboard .soc-label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 600;
+}
+
+.bms-dashboard .pack-info {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.bms-dashboard .info-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bms-dashboard .info-label {
+  font-size: 11px;
+  color: #666;
+  font-weight: 600;
+}
+
+.bms-dashboard .info-value {
+  font-size: 15px;
+  color: #333;
+  font-weight: 700;
+}
+
+.bms-dashboard .info-value.green {
+  color: #4caf50;
+  font-size: 18px;
+}
+
+.bms-dashboard .cell-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bms-dashboard .cell-table th {
+  background: #f0f0f0;
+  padding: 10px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: #555;
+  border-bottom: 2px solid #ccc;
+}
+
+.bms-dashboard .cell-table td {
+  padding: 8px 10px;
+  text-align: center;
+  font-size: 11px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.bms-dashboard .cell-table tbody tr:hover {
+  background: #f8f8f8;
+}
+
+.bms-dashboard .cell-active {
+  color: #0066cc;
+  font-weight: 600;
+}
+
+.bms-dashboard .cell-inactive {
+  opacity: 0.3;
+}
+
+.bms-dashboard .bms-right {
+  width: 360px;
+  min-width: 280px;
+  background: white;
+  border-left: 1px solid #ccc;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.bms-dashboard .learnings-section {
+  background: #e3f2fd;
+  border: 1px solid #90caf9;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.bms-dashboard .learning-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 3px;
+  margin-bottom: 6px;
+  font-size: 11px;
+}
+
+.bms-dashboard .learning-label {
+  color: #666;
+  font-weight: 500;
+}
+
+.bms-dashboard .learning-value {
+  color: #333;
+  font-weight: 700;
+}
+
+.bms-dashboard .alarms-section {
+  background: #fff3e0;
+  border: 1px solid #ffb74d;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.bms-dashboard .alarm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.bms-dashboard .alarm-indicators {
+  display: flex;
+  gap: 12px;
+  font-size: 10px;
+}
+
+.bms-dashboard .alarm-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.bms-dashboard .alarm-dot.active {
+  background: #f44336;
+  box-shadow: 0 0 6px rgba(244, 67, 54, 0.6);
+}
+
+.bms-dashboard .alarm-dot.latched {
+  background: #2196f3;
+}
+
+.bms-dashboard .alarms-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.bms-dashboard .alarm-item {
+  padding: 6px 10px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 3px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bms-dashboard .alarm-item.active-alarm {
+  background: #ffebee;
+  border-color: #f44336;
+  color: #c62828;
+  font-weight: 600;
+}
+
+.bms-dashboard .bms-footer {
+  background: #f0f0f0;
+  border-top: 1px solid #ccc;
+  padding: 8px 16px;
+}
+
+.bms-dashboard .help-btn {
+  padding: 6px 16px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.bms-dashboard .reset-btn {
+  width: 200px;
+  margin: 0 auto;
+  display: block;
+}
+
+.bms-dashboard .header-time {
+  font-size: 12px;
+  color: #666;
+  font-weight: 600;
+}
+
+.live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 12px;
+  padding: 4px 12px;
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid #4caf50;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #4caf50;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 1200px) {
+  .bms-dashboard .pack-overview {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .bms-dashboard .bms-right {
+    width: 300px;
+  }
+}
+
+@media (max-width: 900px) {
+  .bms-dashboard .bms-main {
+    flex-direction: column;
+  }
+  .bms-dashboard .bms-right {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid #ccc;
+  }
+  .bms-dashboard .soc-section {
+    flex-direction: column;
+  }
+  .bms-dashboard .pack-overview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

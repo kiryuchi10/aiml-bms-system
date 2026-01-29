@@ -1,0 +1,151 @@
+/* Virtual Fuel Gauge modal */
+
+.vfg-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.vfg-modal {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  min-width: 480px;
+  max-width: 560px;
+  padding: 20px;
+  border: 1px solid #ccc;
+}
+
+.vfg-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.vfg-row {
+  margin-bottom: 12px;
+}
+
+.vfg-label {
+  display: block;
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.vfg-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.vfg-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.vfg-input-row .vfg-input {
+  flex: 1;
+}
+
+.vfg-btn {
+  padding: 8px 16px;
+  border: 1px solid #0066cc;
+  background: #0066cc;
+  color: white;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.vfg-btn.secondary {
+  background: #f0f0f0;
+  color: #333;
+  border-color: #adadad;
+}
+
+.vfg-valid {
+  font-size: 11px;
+  color: #2e7d32;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.vfg-progress-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.vfg-progress-label {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.vfg-progress-bar-wrap {
+  height: 24px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.vfg-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50, #2e7d32);
+  transition: width 0.3s ease;
+}
+
+.vfg-progress-text {
+  font-size: 11px;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.vfg-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.vfg-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.vfg-checkbox-row input {
+  width: 16px;
+  height: 16px;
+}
+
+.vfg-checkbox-row label {
+  font-size: 12px;
+  color: #333;
+  cursor: pointer;
+}
+
+.vfg-select-btn {
+  padding: 6px 12px;
+  border: 1px solid #adadad;
+  background: #f8f8f8;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+}
