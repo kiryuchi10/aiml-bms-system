@@ -1,8 +1,11 @@
 /**
  * Dashboard API client: Base http://localhost:8000, prefix /api/v1.
- * GET /dashboard/fleet, /dashboard/vehicle/{id}, /dashboard/vehicle/{id}/pack-view.
+ * BMS: GET /dashboard/vehicle/{vehicleId}, /dashboard/vehicle/{vehicleId}/pack-view (string vehicleId).
+ * Fleet: GET /dashboard/fleet, /dashboard/vehicle/{id} (int).
  */
-const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:8000'
+import { apiGet } from './api'
+import type { DashboardResponse, PackViewResponse } from '../types/bms'
+
 const PREFIX = '/api/v1'
 
 export type FleetCard = {
@@ -20,7 +23,7 @@ export type VehicleKpi = {
   charging_count: number
 }
 
-export type CellState = {
+export type CellStateLegacy = {
   cell_id: string
   voltage: number | null
   temperature: number | null
@@ -29,18 +32,18 @@ export type CellState = {
   balancing: boolean
 }
 
-function getToken(): string | null {
-  return localStorage.getItem('token')
+async function fetchJson<T>(path: string): Promise<T> {
+  return apiGet<T>(`${PREFIX}${path}`)
 }
 
-async function fetchJson<T>(path: string): Promise<T> {
-  const url = `${API_BASE}${PREFIX}${path}`
-  const headers: HeadersInit = {}
-  const token = getToken()
-  if (token) headers['Authorization'] = `Bearer ${token}`
-  const res = await fetch(url, { headers })
-  if (!res.ok) throw new Error(await res.text())
-  return res.json() as Promise<T>
+/** BMS dashboard: full pack/cells/alarms/learnings (string vehicleId, e.g. MBM165-P50-B). */
+export function getVehicleDashboard(vehicleId: string): Promise<DashboardResponse> {
+  return fetchJson<DashboardResponse>(`/dashboard/vehicle/${vehicleId}`)
+}
+
+/** BMS pack-view: ts, min/max cell V, cells for grid. */
+export function getPackViewBms(vehicleId: string): Promise<PackViewResponse> {
+  return fetchJson<PackViewResponse>(`/dashboard/vehicle/${vehicleId}/pack-view`)
 }
 
 export function getFleet(): Promise<FleetCard[]> {
@@ -51,6 +54,6 @@ export function getDashboardVehicle(vehicleId: number): Promise<VehicleKpi> {
   return fetchJson<VehicleKpi>(`/dashboard/vehicle/${vehicleId}`)
 }
 
-export function getPackView(vehicleId: number): Promise<CellState[]> {
-  return fetchJson<CellState[]>(`/dashboard/vehicle/${vehicleId}/pack-view`)
+export function getPackView(vehicleId: number): Promise<CellStateLegacy[]> {
+  return fetchJson<CellStateLegacy[]>(`/dashboard/vehicle/${vehicleId}/pack-view`)
 }

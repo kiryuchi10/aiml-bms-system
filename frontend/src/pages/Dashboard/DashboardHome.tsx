@@ -1,66 +1,73 @@
 /**
- * DashboardHome: "Battery pack information" main screen.
- * Fetches GET /dashboard/vehicle/{id} and GET /dashboard/vehicle/{id}/pack-view (vehicle from URL or first fleet).
+ * DashboardHome: "Battery pack information" — REST initial load + WebSocket live updates.
+ * BMS contract: pack/cells/alarms; connected/stale in status.
  */
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { getFleet, getDashboardVehicle, getPackView } from '../../services/dashboardApi'
+import { getVehicleDashboard } from '../../services/dashboardApi'
+import { useBmsStream } from '../../hooks/useBmsStream'
 import { BatteryPackPanel } from '../../components/bms/BatteryPackPanel'
 import { CanLinkStatus } from '../../components/bms/CanLinkStatus'
 import { SignalTile } from '../../components/bms/SignalTile'
 
+const DEFAULT_VEHICLE_ID = import.meta.env.VITE_VEHICLE_ID ?? 'MBM165-P50-B'
+
 export function DashboardHome() {
-  const { id } = useParams<{ id: string }>()
-  const [vehicleId, setVehicleId] = useState<number | null>(id ? parseInt(id, 10) : null)
-  const [packView, setPackView] = useState<Array<{ cell_id: string; voltage: number | null; temperature: number | null; soc: number | null }>>([])
+  const vehicleId = DEFAULT_VEHICLE_ID
+  const [initial, setInitial] = useState<Awaited<ReturnType<typeof getVehicleDashboard>> | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  const { pack: wsPack, cells: wsCells, alarms: wsAlarms, connected, stale } = useBmsStream()
+
   useEffect(() => {
-    let cancelled = false
-    async function load() {
-      setLoading(true)
-      setError(null)
-      try {
-        const fleet = await getFleet()
-        const vid = vehicleId ?? (fleet[0]?.vehicle_id ?? null)
-        if (vid == null) {
-          setPackView([])
-          setVehicleId(null)
-          return
-        }
-        if (!cancelled) setVehicleId(vid)
-        const [kpi, cells] = await Promise.all([
-          getDashboardVehicle(vid),
-          getPackView(vid),
-        ])
-        if (!cancelled) setPackView(cells)
-      } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : 'Failed to load')
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-    load()
-    return () => { cancelled = true }
+    getVehicleDashboard(vehicleId)
+      .then(setInitial)
+      .catch((e) => setError(e instanceof Error ? e.message : 'Failed to load'))
+      .finally(() => setLoading(false))
   }, [vehicleId])
 
-  if (loading) return <div className="dashboard-loading">Loading...</div>
-  if (error) return <div className="dashboard-error">{error}</div>
+  const pack = wsPack ?? initial?.pack ?? null
+  const cells = wsCells.length ? wsCells : (initial?.cells ?? [])
+  const alarms = (wsAlarms.active.length || wsAlarms.latched.length) ? wsAlarms : (initial?.alarms ?? { active: [], latched: [] })
+
+  const cellsForPanel = cells.map((c) => ({
+    cell_id: String(c.id),
+    voltage: c.v ?? null,
+    temperature: c.t ?? null,
+    soc: c.soc ?? null,
+  }))
+
+  const packVoltage = pack?.voltage ?? pack?.pack_voltage ?? 0
+  const packCurrent = pack?.current ?? pack?.pack_current ?? 0
+  const packTemp = pack?.pack_temp ?? pack?.pack_temp ?? 0
+
+  if (loading && !initial) return <div className="dashboard-loading">Loading...</div>
+  if (error && !initial) return <div className="dashboard-error">{error}</div>
 
   return (
     <div className="dashboard-home">
       <div className="dashboard-home-left">
-        <CanLinkStatus connected={true} />
+        <CanLinkStatus connected={connected} />
+        {stale && <span className="data-stale" title="No update &gt; 3s">Stale</span>}
       </div>
       <div className="dashboard-home-center">
         <h2>Battery pack information</h2>
-        <BatteryPackPanel cells={packView} />
+        <BatteryPackPanel cells={cellsForPanel} />
+        {alarms.active.length > 0 && (
+          <div className="alarms-active">
+            <strong>Active:</strong> {alarms.active.join(', ')}
+          </div>
+        )}
+        {alarms.latched.length > 0 && (
+          <div className="alarms-latched">
+            <strong>Latched:</strong> {alarms.latched.join(', ')}
+          </div>
+        )}
       </div>
       <div className="dashboard-home-right">
-        <SignalTile label="Current" value={0} unit="A" />
-        <SignalTile label="Voltage" value={0} unit="V" />
-        <SignalTile label="Temperature" value={0} unit="°C" />
+        <SignalTile label="Current" value={packCurrent} unit="A" />
+        <SignalTile label="Voltage" value={packVoltage} unit="V" />
+        <SignalTile label="Temperature" value={packTemp} unit="°C" />
       </div>
     </div>
   )

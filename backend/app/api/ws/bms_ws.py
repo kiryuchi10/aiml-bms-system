@@ -1,41 +1,45 @@
 """
-WebSocket: /api/v1/ws/bms — push {vehicle_id, signal, value, ts}.
-Use for live BMS data; token via query param optional.
+WebSocket: /api/v1/ws/bms — BMS real-time stream (pack/cells/alarms).
+Control gate: client sends {"type":"control","action":"start"|"stop"} to enable/disable streaming.
+Default streaming=False until client sends start.
 """
-import asyncio
 import json
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Request, WebSocket, WebSocketDisconnect
 
 ws_router = APIRouter()
-_connections: list[WebSocket] = []
 
 
 @ws_router.websocket("/ws/bms")
-async def bms_ws(websocket: WebSocket) -> None:
-    await websocket.accept()
-    _connections.append(websocket)
+async def bms_ws(websocket: WebSocket, request: Request) -> None:
+    manager = request.app.state.ws_manager
+    streamer = request.app.state.bms_streamer
+
+    await manager.connect(websocket)  # accepts and adds to clients
+    streamer.attach_manager(manager)
+
+    # Default: no streaming until client sends start
+    streamer.set_client_streaming(websocket, False)
+    await websocket.send_json({"scope": "state", "streaming": False})
+
     try:
-        await websocket.send_json({"type": "connection", "status": "connected"})
         while True:
             raw = await websocket.receive_text()
             try:
                 msg = json.loads(raw)
-                # Echo or broadcast; in production push from ingest/telemetry
-                if msg.get("type") == "ping":
+                if msg.get("type") == "control":
+                    action = msg.get("action")
+                    if action == "start":
+                        streamer.set_client_streaming(websocket, True)
+                        await websocket.send_json({"scope": "state", "streaming": True})
+                    elif action == "stop":
+                        streamer.set_client_streaming(websocket, False)
+                        await websocket.send_json({"scope": "state", "streaming": False})
+                elif msg.get("type") == "ping":
                     await websocket.send_json({"type": "pong"})
             except json.JSONDecodeError:
                 pass
     except WebSocketDisconnect:
         pass
     finally:
-        if websocket in _connections:
-            _connections.remove(websocket)
-
-
-async def broadcast_bms(vehicle_id: int, signal: str, value: float, ts: str) -> None:
-    payload = {"vehicle_id": vehicle_id, "signal": signal, "value": value, "ts": ts}
-    for ws in _connections:
-        try:
-            await ws.send_json(payload)
-        except Exception:
-            pass
+        streamer.remove_client(websocket)
+        await manager.disconnect(websocket)
