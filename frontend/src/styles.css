@@ -358,3 +358,48 @@ body{
   .mainRow{ grid-template-columns: 110px 1fr; }
 }
 
+/* BMS Pack Dashboard: Status Strip */
+.status-strip-placeholder { color: rgba(255,255,255,0.5); font-size: 14px; }
+.status-strip-item { font-size: 14px; }
+.status-strip-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.status-strip-badge--normal { background: #059669; color: #fff; }
+.status-strip-badge--warn { background: #eab308; color: #000; }
+.status-strip-badge--danger { background: #dc2626; color: #fff; }
+
+/* Shell layout (Dashboard routes) */
+.shell { display: flex; flex-direction: column; min-height: 100vh; }
+.top-bar { height: 56px; display: flex; align-items: center; padding: 0 16px; background: var(--panel); border-bottom: 1px solid var(--border); }
+.top-bar-title { margin: 0; font-size: 18px; font-weight: 700; }
+.shell-body { display: flex; flex: 1; }
+.side-bar { width: 200px; padding: 12px; border-right: 1px solid var(--border); background: var(--panel); }
+.side-nav { display: flex; flex-direction: column; gap: 8px; }
+.side-link { padding: 10px 12px; border-radius: 8px; text-decoration: none; color: var(--text); }
+.side-link:hover { background: var(--btn); }
+.side-link.active { background: var(--blue); color: #fff; }
+.shell-main { flex: 1; padding: 16px; overflow: auto; }
+.dashboard-home { display: grid; grid-template-columns: 120px 1fr 200px; gap: 16px; }
+.dashboard-home-center h2 { margin-top: 0; }
+.battery-pack-panel { margin-top: 12px; }
+.cell-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.cell-card { padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel); }
+.cell-card-id { font-weight: 700; }
+.cell-card-v, .cell-card-t, .cell-card-soc { font-size: 14px; color: var(--muted); margin-top: 4px; }
+.can-link-status { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); }
+.can-link-status.connected { border-color: #2ecc71; }
+.can-link-dot { width: 8px; height: 8px; border-radius: 50%; background: #999; }
+.can-link-status.connected .can-link-dot { background: #2ecc71; }
+.signal-tile { padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px; }
+.signal-tile-label { font-size: 12px; color: var(--muted); }
+.signal-tile-value { font-size: 18px; font-weight: 700; }
+.fleet-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.fleet-card { padding: 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel); text-decoration: none; color: var(--text); }
+.fleet-card:hover { border-color: var(--blue); }
+.fleet-card-vin { font-weight: 700; }
+.fleet-card-meta { font-size: 12px; color: var(--muted); margin-top: 8px; }
+.dashboard-loading, .dashboard-error { padding: 16px; }
+.dashboard-error { color: #c00; }

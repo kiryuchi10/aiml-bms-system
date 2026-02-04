@@ -7,3 +7,5 @@ alembic
 python-dotenv
 pandas
 pyarrow
+python-jose[cryptography]
+passlib[bcrypt]

@@ -3,63 +3,38 @@
 .env.*
 !.env.example
 .env.local
-.env.development
-.env.production
-.env.test
+.env.development.local
+.env.production.local
 *.pem
 *.key
 secrets/
-*.secret
-.venv/
-venv/
-env/
 
-# --- High-volume / large data ---
-*.parquet
-data/raw/
-data/processed/
-*.mat
-*.zip
-
-# --- Markdown (except allowed integration doc) ---
-*.md
-!**/README_INTEGRATION.md
-
-# --- Python ---
-__pycache__/
-*.py[cod]
-*.egg-info/
+# --- Dependencies & build ---
+node_modules/
 dist/
-build/
-*.egg
+*.local
 
-# --- Artifacts ---
-artifacts/
-checkpoints/
-*.pkl
-*.joblib
-*.pt
-*.pth
+# --- Markdown: allow only README and supplement docs ---
+*.md
+!README.md
+!**/README.md
+!SUPPLEMENT*.md
+!**/SUPPLEMENT*.md
+!docs/*.md
+!**/docs/*.md
+
+# --- Logs & cache ---
+*.log
+npm-debug.log*
+.npm
+.eslintcache
 
 # --- IDE & OS ---
 .idea/
 .vscode/
-*.swp
 .DS_Store
 Thumbs.db
 
-# --- Node / Frontend ---
-node_modules/
-apps/web/node_modules/
-frontend/node_modules/
-*.log
-npm-debug.log*
-
-# --- Jupyter ---
-.ipynb_checkpoints/
-*.ipynb
-
-# --- Testing & coverage ---
-.pytest_cache/
-.coverage
-htmlcov/
+# --- Optional ---
+coverage/
+*.tsbuildinfo

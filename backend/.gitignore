@@ -3,9 +3,6 @@
 .env.*
 !.env.example
 .env.local
-.env.development
-.env.production
-.env.test
 *.pem
 *.key
 secrets/
@@ -14,16 +11,27 @@ secrets/
 venv/
 env/
 
-# --- High-volume / large data ---
+# --- Data & artifacts ---
 *.parquet
 data/raw/
 data/processed/
 *.mat
 *.zip
+*.pkl
+*.joblib
+*.pt
+*.pth
+artifacts/
+checkpoints/
 
-# --- Markdown (except allowed integration doc) ---
+# --- Markdown: allow only README and supplement docs ---
 *.md
-!**/README_INTEGRATION.md
+!README.md
+!**/README.md
+!SUPPLEMENT*.md
+!**/SUPPLEMENT*.md
+!docs/*.md
+!**/docs/*.md
 
 # --- Python ---
 __pycache__/
@@ -33,33 +41,12 @@ dist/
 build/
 *.egg
 
-# --- Artifacts ---
-artifacts/
-checkpoints/
-*.pkl
-*.joblib
-*.pt
-*.pth
-
 # --- IDE & OS ---
 .idea/
 .vscode/
-*.swp
 .DS_Store
-Thumbs.db
 
-# --- Node / Frontend ---
-node_modules/
-apps/web/node_modules/
-frontend/node_modules/
-*.log
-npm-debug.log*
-
-# --- Jupyter ---
-.ipynb_checkpoints/
-*.ipynb
-
-# --- Testing & coverage ---
+# --- Testing ---
 .pytest_cache/
 .coverage
 htmlcov/
