@@ -1,0 +1,11 @@
+# Cursor Rules (All Projects)
+
+- Always implement: schema → service → router order.
+- Keep time-series tables append-only; enforce unique keys for idempotency.
+- Split data layers: Raw / Feature / Metric (never mix).
+- For any endpoint: include pagination or downsample parameters when time-series.
+- Put business logic in services/, routers must be thin.
+- Add TODO blocks at top of new files: purpose, inputs/outputs, next steps.
+- Never hardcode secrets; use .env and .env.example.
+- Add minimal tests: ingest idempotency + API smoke for each new feature.
+- Prefer docker-compose for local parity; CI must run lint+tests+build.

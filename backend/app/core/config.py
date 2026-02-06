@@ -10,7 +10,7 @@ class Settings(BaseSettings):
 
     database_url: str = "postgresql+psycopg://aimlbms:aimlbms@localhost:5432/aimlbms"
     allow_origins: str = "http://localhost:5173"
-    data_dir: str = "data"
+    data_dir: str = "./data"
 
     @property
     def allow_origins_list(self) -> list[str]:
@@ -18,7 +18,7 @@ class Settings(BaseSettings):
 
     @property
     def data_path(self) -> Path:
-        # `backend/` is expected to be the working directory when running the API
+        # backend/ is expected to be the working directory; ./data -> backend/data
         return Path(self.data_dir).resolve()
 
 

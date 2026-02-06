@@ -7,3 +7,6 @@ alembic
 python-dotenv
 pandas
 pyarrow
+torch
+scikit-learn
+scipy

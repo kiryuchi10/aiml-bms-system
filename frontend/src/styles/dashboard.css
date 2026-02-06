@@ -1,0 +1,55 @@
+/* Dashboard Home — 12-col layout, row/col/stack (no Tailwind). */
+
+.shell { height: 100vh; display: flex; flex-direction: column; }
+.body { flex: 1; display: flex; overflow: hidden; }
+.main { flex: 1; overflow: auto; padding: 16px; background: #fff; }
+
+.row { margin-bottom: 12px; }
+.row-full { width: 100%; }
+.row-2col { display: flex; gap: 12px; align-items: flex-start; }
+
+.col { display: flex; flex-direction: column; gap: 12px; }
+.col-8 { flex: 8; min-width: 0; }
+.col-4 { flex: 4; min-width: 0; }
+
+.stack { gap: 12px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* Tiles */
+.pack-overview-tiles .tiles-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.tile { padding: 10px; border-radius: 6px; background: #f5f5f5; border: 1px solid #e0e0e0; }
+.tile-label { font-size: 11px; color: #666; display: block; }
+.tile-value { font-size: 16px; font-weight: 700; color: #333; }
+
+.card { padding: 12px; border-radius: 6px; border: 1px solid #e0e0e0; background: #fff; }
+.card-title { font-size: 13px; margin: 0 0 8px 0; }
+
+.soc-gauge-card .soc-value { font-size: 24px; font-weight: 700; text-align: center; }
+.soc-gauge-card .soc-label { font-size: 11px; color: #666; text-align: center; }
+.soh-card .value { color: #2e7d32; }
+
+.worst-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.worst-item .label { font-size: 11px; color: #666; }
+.worst-item .value { font-weight: 600; }
+
+.mini-table { width: 100%; font-size: 12px; }
+.mini-table td { padding: 4px 8px; }
+.mini-table tr.severity-critical { color: #c62828; }
+.mini-table tr.severity-warning { color: #f57c00; }
+
+.table-wrap { overflow-x: auto; }
+.cell-table { width: 100%; font-size: 12px; border-collapse: collapse; }
+.cell-table th, .cell-table td { padding: 6px 8px; text-align: left; border-bottom: 1px solid #eee; }
+.cell-table tbody tr { cursor: pointer; }
+.cell-table tbody tr:hover { background: #f5f5f5; }
+
+.empty-state { font-size: 12px; color: #888; padding: 8px 0; }
+
+.learnings-list { list-style: none; margin: 0; padding: 0; font-size: 12px; }
+.learnings-list li { display: flex; justify-content: space-between; padding: 4px 0; }
+
+.alarms-grid-summary { display: flex; gap: 8px; flex-wrap: wrap; }
+.alarms-grid-summary .chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; border: 1px solid #ccc; background: #fff; }
+.alarms-grid-summary .chip .dot { width: 6px; height: 6px; border-radius: 50%; background: #888; }
+.alarms-grid-summary .chip.active .dot { background: #f57c00; }
+.alarms-grid-summary .chip.latched .dot { background: #c62828; }

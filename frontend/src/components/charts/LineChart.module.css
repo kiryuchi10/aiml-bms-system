@@ -1,0 +1,13 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+}
+.svg {
+  display: block;
+}
