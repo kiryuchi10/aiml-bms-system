@@ -3,7 +3,7 @@ ML API v1: train, runs, run/{id}, infer.
 Wraps existing training routes with v1 prefix.
 """
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 from sqlalchemy import func
 from sqlalchemy.orm import Session

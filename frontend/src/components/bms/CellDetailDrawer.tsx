@@ -1,143 +1,120 @@
 /**
- * Cell detail drawer: current status, voltage/temperature timeseries, alarm history.
- * Fetches /api/v1/cells/timeseries and uses active-alarms filtered by cell_id.
+ * Cell detail drawer: current status, voltage/temp trends, alarm history.
+ * Uses fetchCellDetail (telemetryApi) — spec: current + series + alarm_history.
  */
 
-import { useEffect, useMemo, useState } from 'react'
-import { getCellTimeseries, getActiveAlarms, type CellLatestRow, type TimeseriesPoint, type AlarmEventDb } from '../../services/apiV1'
-import { RealtimeChart, type ChartPoint } from './RealtimeChart'
-import '../../styles/BMSDashboard.css'
-
-const VEHICLE_ID = 1
-const HOUR_MS = 60 * 60 * 1000
+import { useEffect, useState } from 'react'
+import { fetchCellDetail, type CellDetailResponse } from '../../services/telemetryApi'
 
 type Props = {
+  packId: string
   cellId: number | null
-  cellLatest: CellLatestRow | null
   open: boolean
   onClose: () => void
 }
 
-export function CellDetailDrawer({ cellId, cellLatest, open, onClose }: Props) {
-  const [voltagePoints, setVoltagePoints] = useState<TimeseriesPoint[]>([])
-  const [tempPoints, setTempPoints] = useState<TimeseriesPoint[]>([])
-  const [alarms, setAlarms] = useState<AlarmEventDb[]>([])
+export function CellDetailDrawer({ packId, cellId, open, onClose }: Props) {
+  const [data, setData] = useState<CellDetailResponse | null>(null)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (!cellId || !open) return
+    if (!open || !cellId) return
+    let cancelled = false
     setLoading(true)
-    const end = new Date()
-    const start = new Date(end.getTime() - 24 * HOUR_MS)
-    const startStr = start.toISOString()
-    const endStr = end.toISOString()
-    Promise.all([
-      getCellTimeseries(cellId, { vehicleId: VEHICLE_ID, signal: 'voltage', start: startStr, end: endStr, limit: 500 }),
-      getCellTimeseries(cellId, { vehicleId: VEHICLE_ID, signal: 'temperature', start: startStr, end: endStr, limit: 500 }),
-      getActiveAlarms(VEHICLE_ID, 24),
-    ])
-      .then(([vRes, tRes, aRes]) => {
-        setVoltagePoints(vRes.points ?? [])
-        setTempPoints(tRes.points ?? [])
-        setAlarms((aRes.alarms ?? []).filter((a) => a.cell_id === cellId))
+    setData(null)
+    fetchCellDetail(packId, cellId, 60)
+      .then((d) => {
+        if (!cancelled) setData(d)
       })
-      .finally(() => setLoading(false))
-  }, [cellId, open])
-
-  const chartVoltage: ChartPoint[] = useMemo(
-    () => voltagePoints.map((p) => ({ t: new Date(p.ts).getTime(), v: p.value })),
-    [voltagePoints]
-  )
-  const chartTemp: ChartPoint[] = useMemo(
-    () => tempPoints.map((p) => ({ t: new Date(p.ts).getTime(), soc: p.value })),
-    [tempPoints]
-  )
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [open, cellId, packId])
 
   return (
     <div className={`cell-detail-drawer ${open ? 'open' : ''}`} aria-hidden={!open}>
       <div className="drawer-header">
-        <h2>Cell {cellId ?? '—'} Detail</h2>
+        <h2>Cell Detail {cellId ? `#${String(cellId).padStart(2, '0')}` : ''}</h2>
         <button type="button" className="drawer-close" onClick={onClose} aria-label="Close">
           ×
         </button>
       </div>
+
       <div className="drawer-content">
-        <div className="detail-section">
-          <h3>Current Status</h3>
-          {cellLatest ? (
-            <div className="detail-grid">
-              <div className="detail-item">
-                <div className="detail-label">Voltage</div>
-                <div className="detail-value" style={{ color: '#0066cc' }}>
-                  {cellLatest.voltage != null ? `${cellLatest.voltage.toFixed(3)} V` : '—'}
-                </div>
-              </div>
-              <div className="detail-item">
-                <div className="detail-label">Temperature</div>
-                <div className="detail-value" style={{ color: '#ff6b35' }}>
-                  {cellLatest.temperature != null ? `${cellLatest.temperature.toFixed(1)} °C` : '—'}
-                </div>
-              </div>
-              <div className="detail-item">
-                <div className="detail-label">Current</div>
-                <div className="detail-value" style={{ color: '#9c27b0' }}>
-                  {cellLatest.current != null ? `${cellLatest.current.toFixed(3)} A` : '—'}
-                </div>
-              </div>
-              <div className="detail-item">
-                <div className="detail-label">SOC</div>
-                <div className="detail-value" style={{ color: '#4caf50' }}>
-                  {cellLatest.soc != null ? `${(cellLatest.soc * 100).toFixed(1)} %` : '—'}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <p className="empty-state">No latest data</p>
-          )}
-        </div>
+        {loading && <div style={{ padding: 12 }}>Loading...</div>}
 
-        <div className="detail-section">
-          <h3>Voltage Trend (last 24h)</h3>
-          {loading ? (
-            <div className="loading-state">Loading…</div>
-          ) : chartVoltage.length > 0 ? (
-            <RealtimeChart points={chartVoltage} metric="v" width={360} height={180} />
-          ) : (
-            <div className="timeseries-chart">
-              <div style={{ padding: '80px 20px', textAlign: 'center', color: '#999' }}>No voltage data</div>
-            </div>
-          )}
-        </div>
+        {!loading && data && (
+          <>
+            <section className="detail-section">
+              <h3>Current Status</h3>
+              <div className="detail-grid">
+                <DetailItem label="Voltage" value={`${data.current.voltage_v.toFixed(3)} V`} />
+                <DetailItem label="Temperature" value={`${data.current.temp_c.toFixed(1)} °C`} />
+                <DetailItem label="Current" value={`${data.current.current_a.toFixed(3)} A`} />
+                <DetailItem label="SOC" value={`${data.current.soc.toFixed(0)}%`} />
+                <DetailItem label="SOH" value={`${data.current.soh.toFixed(0)}%`} />
+                <DetailItem label="Internal R" value={`${data.current.internal_r_mohm.toFixed(0)} mΩ`} />
+              </div>
+            </section>
 
-        <div className="detail-section">
-          <h3>Temperature Trend (last 24h)</h3>
-          {loading ? null : tempPoints.length > 0 ? (
-            <RealtimeChart points={chartTemp} metric="temp" width={360} height={180} />
-          ) : (
-            <div className="timeseries-chart">
-              <div style={{ padding: '80px 20px', textAlign: 'center', color: '#999' }}>No temperature data</div>
-            </div>
-          )}
-        </div>
+            <section className="detail-section">
+              <h3>Voltage Trend (Last 1 Hour)</h3>
+              <div className="timeseries-chart">
+                {/* TODO: Chart.js/Recharts line chart using data.series */}
+                <div style={{ padding: '80px 20px', textAlign: 'center', color: '#999' }}>
+                  TODO: Voltage trend chart<br />
+                  points: {data.series.ts.length}
+                </div>
+              </div>
+            </section>
 
-        <div className="detail-section">
-          <h3>Alarm History (last 24h)</h3>
-          {alarms.length > 0 ? (
-            <ul className="alarms-list" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              {alarms.map((a) => (
-                <li key={a.id} className={`alarm-item severity-${a.severity}`}>
-                  <span className="alarm-type">{a.alarm_type}</span>
-                  <span className="alarm-value">{a.value != null ? a.value.toFixed(2) : '—'}</span>
-                  {a.threshold != null && <span>threshold {a.threshold.toFixed(2)}</span>}
-                  {a.rationale && <span className="alarm-rationale">{a.rationale}</span>}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div style={{ background: '#f8f8f8', padding: 12, borderRadius: 4, fontSize: 12 }}>No alarms in the last 24 hours</div>
-          )}
-        </div>
+            <section className="detail-section">
+              <h3>Temperature Trend (Last 1 Hour)</h3>
+              <div className="timeseries-chart">
+                <div style={{ padding: '80px 20px', textAlign: 'center', color: '#999' }}>
+                  TODO: Temperature trend chart<br />
+                  points: {data.series.ts.length}
+                </div>
+              </div>
+            </section>
+
+            <section className="detail-section">
+              <h3>Alarm History</h3>
+              {data.alarm_history.length === 0 ? (
+                <div style={{ background: '#f8f8f8', padding: 12, borderRadius: 4, fontSize: 12 }}>
+                  No alarms in the last 24 hours
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {data.alarm_history.map((a, idx) => (
+                    <div key={idx} style={{ border: '1px solid #eee', padding: 10, borderRadius: 6 }}>
+                      <div style={{ fontWeight: 700 }}>{a.title} ({a.severity})</div>
+                      <div style={{ fontSize: 12, color: '#666' }}>{a.ts}</div>
+                      <div style={{ fontSize: 12 }}>{a.rationale}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          </>
+        )}
+
+        {!loading && open && !data && (
+          <div style={{ padding: 12, color: '#999' }}>No detail data.</div>
+        )}
       </div>
+    </div>
+  )
+}
+
+function DetailItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="detail-item">
+      <div className="detail-label">{label}</div>
+      <div className="detail-value">{value}</div>
     </div>
   )
 }
