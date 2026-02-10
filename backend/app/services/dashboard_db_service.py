@@ -125,15 +125,12 @@ def get_active_alarms(
 ) -> list[dict[str, Any]]:
     """
     Active alarm_event rows (e.g. last 24h or since_ts). Returns list of alarm dicts.
+    Filter must be applied before limit() (SQLAlchemy requirement).
     """
-    q = (
-        db.query(AlarmEvent)
-        .filter(AlarmEvent.vehicle_id == vehicle_id)
-        .order_by(AlarmEvent.ts.desc())
-        .limit(limit)
-    )
+    q = db.query(AlarmEvent).filter(AlarmEvent.vehicle_id == vehicle_id)
     if since_ts is not None:
         q = q.filter(AlarmEvent.ts >= since_ts)
+    q = q.order_by(AlarmEvent.ts.desc()).limit(limit)
     rows = q.all()
     return [
         {

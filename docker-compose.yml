@@ -1,23 +1,44 @@
-# BMS Suite: Postgres + optional backend/frontend
+# BMS Suite: MySQL + Backend + Frontend (all in one)
 # Usage: docker compose up -d
-# Then: backend uses DATABASE_URL=postgresql+psycopg://aimlbms:aimlbms@db:5432/aimlbms
+# Then open http://localhost:5173 (frontend) — API at http://localhost:8000
 
 services:
   db:
-    image: postgres:15-alpine
+    image: mysql:8
     environment:
-      POSTGRES_USER: aimlbms
-      POSTGRES_PASSWORD: aimlbms
-      POSTGRES_DB: aimlbms
+      MYSQL_ROOT_PASSWORD: "12345"
+      MYSQL_DATABASE: aimlbms
+      MYSQL_USER: aimlbms
+      MYSQL_PASSWORD: aimlbms
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U aimlbms"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p12345"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: "mysql+pymysql://root:12345@db:3306/aimlbms"
+      ALLOW_ORIGINS: "http://localhost:5173,http://127.0.0.1:5173"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_PROXY_TARGET: "http://backend:8000"
+    depends_on:
+      - backend
 
 volumes:
-  pgdata: {}
+  mysql_data: {}

@@ -103,19 +103,21 @@ async function post<T>(path: string, body: unknown): Promise<T> {
   return res.json() as Promise<T>
 }
 
-/** GET /api/v1/dashboard/overview */
-export function getDashboardOverview(datasetKey?: string | null, rowIndex?: number) {
+/** GET /api/v1/dashboard/overview — use vehicle_id when no dataset_key for DB-backed data */
+export function getDashboardOverview(datasetKey?: string | null, rowIndex?: number, vehicleId = 1) {
   const params: Record<string, string | number> = {}
   if (datasetKey) params.dataset_key = datasetKey
   if (rowIndex != null) params.row_index = rowIndex
+  if (!datasetKey) params.vehicle_id = vehicleId
   return get<DashboardOverview>(`${API_V1}/dashboard/overview`, Object.keys(params).length ? params : undefined)
 }
 
-/** GET /api/v1/dashboard/cell-grid */
-export function getDashboardCellGrid(datasetKey?: string | null, rowIndex?: number) {
+/** GET /api/v1/dashboard/cell-grid — use vehicle_id when no dataset_key for DB-backed data */
+export function getDashboardCellGrid(datasetKey?: string | null, rowIndex?: number, vehicleId = 1) {
   const params: Record<string, string | number> = {}
   if (datasetKey) params.dataset_key = datasetKey
   if (rowIndex != null) params.row_index = rowIndex
+  if (!datasetKey) params.vehicle_id = vehicleId
   return get<DashboardCellGrid>(`${API_V1}/dashboard/cell-grid`, Object.keys(params).length ? params : undefined)
 }
 
@@ -125,11 +127,15 @@ export function getDashboardBalancingStatus(datasetKey?: string | null) {
   return get<BalancingStatus>(`${API_V1}/dashboard/balancing-status`, params)
 }
 
-/** GET /api/v1/dashboard/alarms */
-export function getDashboardAlarms(datasetKey?: string | null, rowIndex?: number) {
+/** GET /api/v1/dashboard/alarms — use vehicle_id when no dataset_key for DB-backed data */
+export function getDashboardAlarms(datasetKey?: string | null, rowIndex?: number, vehicleId = 1, hours = 168) {
   const params: Record<string, string | number> = {}
   if (datasetKey) params.dataset_key = datasetKey
   if (rowIndex != null) params.row_index = rowIndex
+  if (!datasetKey) {
+    params.vehicle_id = vehicleId
+    params.hours = hours
+  }
   return get<DashboardAlarms>(`${API_V1}/dashboard/alarms`, Object.keys(params).length ? params : undefined)
 }
 

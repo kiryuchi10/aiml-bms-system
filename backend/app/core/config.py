@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     app_name: str = "aiml-bms-system"
     app_env: str = "dev"
 
-    database_url: str = "postgresql+psycopg://aimlbms:aimlbms@localhost:5432/aimlbms"
+    database_url: str = "mysql+pymysql://root:12345@localhost:3306/aimlbms"
     allow_origins: str = "http://localhost:5173"
     data_dir: str = "./data"
 
