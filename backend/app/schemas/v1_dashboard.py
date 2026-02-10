@@ -82,6 +82,52 @@ class DashboardAlarms(BaseModel):
     count: int = 0
 
 
+# ----- Alarms API (list, detail, ack) -----
+
+
+class AlarmEvidenceItem(BaseModel):
+    """Single alarm_evidence row."""
+
+    id: int
+    alarm_id: int
+    reason_type: str  # rule | model
+    description: str | None = None
+    rule_id: str | None = None
+    rule_json: dict | None = None
+    model_run_id: int | None = None
+    model_name: str | None = None
+    anomaly_score: float | None = None
+    anomaly_threshold: float | None = None
+    top_features: list | None = None
+    created_at: str | None = None
+
+
+class AlarmDetail(BaseModel):
+    """GET /api/v1/alarms/{id} - alarm with evidence and recommended_action."""
+
+    id: int
+    vehicle_id: int | None = None
+    module_id: int | None = None
+    cell_id: int | None = None
+    ts: str | None = None
+    severity: str
+    alarm_type: str
+    value: float | None = None
+    threshold: float | None = None
+    rationale: str | None = None
+    source: str | None = None
+    acknowledged_at: str | None = None
+    acknowledged_by: str | None = None
+    evidence: list[AlarmEvidenceItem] = Field(default_factory=list)
+    recommended_action: str = "Review cell and pack telemetry; acknowledge when resolved."
+
+
+class AlarmAckBody(BaseModel):
+    """POST /api/v1/alarms/{id}/ack body."""
+
+    acknowledged_by: str | None = None
+
+
 # ----- WebSocket payload (backend -> frontend) -----
 
 

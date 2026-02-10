@@ -6,16 +6,16 @@ services:
   db:
     image: mysql:8
     environment:
-      MYSQL_ROOT_PASSWORD: "12345"
+      MYSQL_ROOT_PASSWORD: "root12345"
       MYSQL_DATABASE: aimlbms
-      MYSQL_USER: aimlbms
-      MYSQL_PASSWORD: aimlbms
+      MYSQL_USER: bms
+      MYSQL_PASSWORD: "12345"
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p12345"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot12345"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -25,7 +25,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: "mysql+pymysql://root:12345@db:3306/aimlbms"
+      DATABASE_URL: "mysql+pymysql://bms:12345@db:3306/aimlbms"
       ALLOW_ORIGINS: "http://localhost:5173,http://127.0.0.1:5173"
     depends_on:
       db:

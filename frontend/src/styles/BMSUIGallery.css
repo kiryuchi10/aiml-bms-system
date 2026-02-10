@@ -1,0 +1,65 @@
+/* BMS UI Gallery – Dark + Soft Neon (#7CFF6B) theme for layout demos */
+
+.bms-ui-gallery {
+  --bms-bg: #0b0f14;
+  --bms-panel: #0f1620;
+  --bms-line: rgba(255, 255, 255, 0.12);
+  --bms-neon: #7cff6b;
+  --bms-amber: #fbbf24;
+  --bms-red: #ef4444;
+}
+
+.bms-ui-gallery {
+  min-height: 100%;
+  background: var(--bms-bg);
+  color: rgba(255, 255, 255, 0.9);
+  font-family: inherit;
+}
+
+.bms-ui-gallery .bms-panel {
+  background: var(--bms-panel);
+  border: 1px solid var(--bms-line);
+  border-radius: 1rem;
+}
+
+.bms-ui-gallery .bms-card {
+  background: var(--bms-panel);
+  border: 1px solid var(--bms-line);
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+}
+
+.bms-ui-gallery .bms-neon-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--bms-neon);
+  box-shadow: 0 0 10px rgba(124, 255, 107, 0.35);
+}
+
+.bms-ui-gallery .bms-3panel {
+  display: flex;
+  min-height: 70vh;
+  gap: 0;
+}
+
+.bms-ui-gallery .bms-3panel-left {
+  width: 260px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--bms-line);
+  padding: 1.25rem;
+}
+
+.bms-ui-gallery .bms-3panel-main {
+  flex: 1;
+  min-width: 0;
+  padding: 1.5rem;
+  overflow: auto;
+}
+
+.bms-ui-gallery .bms-3panel-right {
+  width: 360px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--bms-line);
+  padding: 1.25rem;
+}

@@ -4,6 +4,10 @@
 -- =========================================
 -- USE aimlbms;
 
+-- Optional: allow acknowledging alarms (MySQL: run once manually if needed)
+-- ALTER TABLE alarm_event ADD COLUMN acknowledged_at DATETIME(3) NULL;
+-- ALTER TABLE alarm_event ADD COLUMN acknowledged_by VARCHAR(64) NULL;
+
 -- -----------------------------
 -- Alarm Evidence (rule + model)
 -- -----------------------------

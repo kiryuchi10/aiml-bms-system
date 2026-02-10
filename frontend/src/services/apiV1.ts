@@ -247,6 +247,51 @@ export function getActiveAlarms(vehicleId = 1, hours = 24) {
   return get<ActiveAlarmsResponse>(`${API_V1}/dashboard/active-alarms`, { vehicle_id: vehicleId, hours })
 }
 
+// ---------- Alarms API (list, detail, ack) ----------
+
+export type AlarmEvidenceItem = {
+  id: number
+  alarm_id: number
+  reason_type: string
+  description: string | null
+  rule_id: string | null
+  rule_json: Record<string, unknown> | null
+  model_run_id: number | null
+  model_name: string | null
+  anomaly_score: number | null
+  anomaly_threshold: number | null
+  top_features: unknown[] | null
+  created_at: string | null
+}
+
+export type AlarmDetail = AlarmEventDb & {
+  module_id: number | null
+  acknowledged_at: string | null
+  acknowledged_by: string | null
+  evidence: AlarmEvidenceItem[]
+  recommended_action: string
+}
+
+export type AlarmsListResponse = { alarms: AlarmEventDb[]; count: number }
+
+/** GET /api/v1/alarms */
+export function getAlarmsList(vehicleId = 1, hours = 168, limit = 200) {
+  return get<AlarmsListResponse>(`${API_V1}/alarms`, { vehicle_id: vehicleId, hours, limit })
+}
+
+/** GET /api/v1/alarms/{id} */
+export function getAlarmDetail(alarmId: number) {
+  return get<AlarmDetail>(`${API_V1}/alarms/${alarmId}`)
+}
+
+/** POST /api/v1/alarms/{id}/ack */
+export function postAlarmAck(alarmId: number, acknowledgedBy?: string) {
+  return post<{ ok: boolean; alarm_id: number; acknowledged_by: string }>(
+    `${API_V1}/alarms/${alarmId}/ack`,
+    acknowledgedBy != null ? { acknowledged_by: acknowledgedBy } : {}
+  )
+}
+
 /** GET /api/v1/cells/latest */
 export function getCellsLatest(vehicleId = 1) {
   return get<CellsLatestResponse>(`${API_V1}/cells/latest`, { vehicle_id: vehicleId })

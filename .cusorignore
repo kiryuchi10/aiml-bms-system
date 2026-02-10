@@ -1,0 +1,16 @@
+node_modules/
+dist/
+build/
+.venv/
+__pycache__/
+.cache/
+data/
+datasets/
+uploads/
+papers/
+*.csv
+*.parquet
+*.h5
+*.log
+*.zip
+*.tar
