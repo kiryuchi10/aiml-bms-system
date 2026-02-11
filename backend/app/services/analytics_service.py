@@ -227,3 +227,42 @@ def get_analytics_aging_map(
     values = [round(abs(c.v - v_mean) * 100, 2) for c in cells]
     statuses = ["normal" if x < 5 else "warning" if x < 15 else "fault" for x in values]
     return {"rows": 1, "cols": len(values), "values": values, "status": statuses}
+
+
+def get_analytics_anomaly_timeline(
+    dataset_key: Optional[str] = None,
+    limit: int = 500,
+) -> dict:
+    """
+    Anomaly score timeline for Battery Doctor / ML. No mock.
+    Reads from soh_features.parquet if present (columns cycle, anomaly_score or score);
+    otherwise returns empty points.
+    Returns: { points: [{ cycle, score }], days: N }
+    """
+    import pandas as pd
+    from app.core.config import settings
+    path = settings.data_path / "soh_features.parquet"
+    if not path.is_file():
+        return {"points": [], "days": 0}
+    try:
+        df = pd.read_parquet(path)
+    except Exception:
+        return {"points": [], "days": 0}
+    cycle_col = None
+    score_col = None
+    for c in ["cycle", "Cycle", "cycle_index"]:
+        if c in df.columns:
+            cycle_col = c
+            break
+    for c in ["anomaly_score", "score", "anomaly"]:
+        if c in df.columns:
+            score_col = c
+            break
+    if cycle_col is None or score_col is None:
+        return {"points": [], "days": int(len(df)) if len(df) else 0}
+    df = df.head(limit)
+    points = [
+        {"cycle": int(row.get(cycle_col, i)), "score": float(row.get(score_col, 0.0))}
+        for i, row in df.iterrows()
+    ]
+    return {"points": points, "days": len(points)}

@@ -26,6 +26,7 @@ import { LayoutBalancingViewPage } from './pages/ui_gallery/LayoutBalancingViewP
 import { LayoutMLOpsViewPage } from './pages/ui_gallery/LayoutMLOpsViewPage'
 import { LayoutFleetOverviewPage } from './pages/ui_gallery/LayoutFleetOverviewPage'
 import { LayoutMinimalIndustrialPage } from './pages/ui_gallery/LayoutMinimalIndustrialPage'
+import BatteryDoctorPage from './pages/BatteryDoctorPage'
 
 export default function App() {
   return (
@@ -42,6 +43,7 @@ export default function App() {
               <Route path="/bms/cells" element={<CellsGridPage />} />
               <Route path="/bms/realtime" element={<RealtimeMonitorPage />} />
               <Route path="/bms/analytics" element={<AnalyticsPage />} />
+              <Route path="/bms/doctor" element={<BatteryDoctorPage />} />
               <Route path="/bms/alarms" element={<AlarmCenterPage />} />
               <Route path="/bms/ml" element={<MLConsolePage />} />
               <Route path="/bms/monitoring" element={<MonitoringPage />} />

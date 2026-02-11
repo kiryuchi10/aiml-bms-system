@@ -15,6 +15,9 @@ export function LeftRail() {
       <NavLink to="/bms/analytics" className={({ isActive }) => `railBtn ${isActive ? 'active' : ''}`}>
         Analytics
       </NavLink>
+      <NavLink to="/bms/doctor" className={({ isActive }) => `railBtn ${isActive ? 'active' : ''}`}>
+        Battery Doctor
+      </NavLink>
       <NavLink to="/bms/alarms" className={({ isActive }) => `railBtn ${isActive ? 'active' : ''}`}>
         Alarm Center
       </NavLink>

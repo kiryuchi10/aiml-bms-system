@@ -415,3 +415,11 @@ export function getAnalyticsThermalMap(datasetKey?: string, rowIndex?: number) {
     Object.keys(params).length ? params : undefined
   )
 }
+
+/** GET /api/v1/analytics/anomaly — anomaly score timeline (soh_features.parquet); no mock */
+export type AnomalyPoint = { cycle: number; score: number }
+export type AnalyticsAnomalyTrend = { points: AnomalyPoint[]; days: number }
+
+export function getAnalyticsAnomalyTrend(limit = 500) {
+  return get<AnalyticsAnomalyTrend>(`${API_V1}/analytics/anomaly`, { limit })
+}

@@ -13,6 +13,7 @@ from app.services.analytics_service import (
     get_analytics_soh_trend,
     get_analytics_thermal_map as get_thermal_map_svc,
     get_analytics_aging_map,
+    get_analytics_anomaly_timeline,
 )
 
 router = APIRouter()
@@ -100,3 +101,12 @@ def get_risk(
     if not out:
         raise HTTPException(status_code=404, detail="No data or dataset not found")
     return out.model_dump()
+
+
+@router.get("/anomaly")
+def get_anomaly(
+    dataset_key: str | None = Query(None),
+    limit: int = Query(500, ge=1, le=2000),
+):
+    """Anomaly score timeline from soh_features.parquet (no mock). Returns { points: [{ cycle, score }], days }."""
+    return get_analytics_anomaly_timeline(dataset_key=dataset_key, limit=limit)
